@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+/* ============================================================
+   OpenRevenue design tokens — "Technical Premium"
+   Tonal stacking, no heavy shadows, emerald reserved for growth.
+   ============================================================ */
+
+@theme {
+  --font-sans: Geist, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-sm: 0.125rem;
+  --radius-DEFAULT: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  --spacing-gutter: 24px;
+  --spacing-page: 40px;
+  --spacing-stack: 32px;
+
+  --ease-oil: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------- DARK (default) ---------- */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --c-bg: #0b0c11;
+  --c-surface: #12131a;
+  --c-surface-low: #1a1b22;
+  --c-surface: #12131a;
+  --c-container: #1e1f26;
+  --c-container-high: #292931;
+  --c-container-highest: #33343c;
+  --c-border: #262730;
+  --c-border-strong: #3a3b45;
+
+  --c-fg: #e3e1ec;
+  --c-fg-muted: #9b9aa8;
+  --c-fg-subtle: #9291a3;
+
+  --c-primary: #4edea3;
+  --c-primary-strong: #10b981;
+  --c-on-primary: #003824;
+  --c-primary-soft: rgba(78, 222, 163, 0.12);
+
+  --c-accent: #e78468;
+  --c-danger: #ff6b6b;
+  --c-danger-soft: rgba(255, 107, 107, 0.12);
+  --c-warn: #f0b429;
+
+  --shadow-overlay: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+  --inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  --grid-dot: rgba(255, 255, 255, 0.045);
+}
+
+/* ---------- LIGHT ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --c-bg: #f7f7f8;
+  --c-surface: #ffffff;
+  --c-surface-low: #fbfbfc;
+  --c-container: #ffffff;
+  --c-container-high: #f2f3f5;
+  --c-container-highest: #e9eaee;
+  --c-border: #e5e7eb;
+  --c-border-strong: #d2d5db;
+
+  --c-fg: #14161a;
+  --c-fg-muted: #5c626d;
+  --c-fg-subtle: #656b75;
+
+  /* --c-primary is used as TEXT, --c-primary-strong as a BUTTON FILL.
+     Both are tuned so they clear WCAG AA on light surfaces. */
+  --c-primary: #047857;
+  --c-primary-strong: #047857;
+  --c-on-primary: #ffffff;
+  --c-primary-soft: rgba(4, 120, 87, 0.1);
+
+  --c-accent: #b4531f;
+  --c-danger: #c81e1e;
+  --c-danger-soft: rgba(220, 38, 38, 0.09);
+  --c-warn: #b45309;
+
+  --shadow-overlay: 0 16px 32px -12px rgba(16, 20, 28, 0.18);
+  --inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+  --grid-dot: rgba(0, 0, 0, 0.05);
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-low: var(--c-surface-low);
+  --color-container: var(--c-container);
+  --color-container-high: var(--c-container-high);
+  --color-container-highest: var(--c-container-highest);
+  --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
+  --color-fg: var(--c-fg);
+  --color-fg-muted: var(--c-fg-muted);
+  --color-fg-subtle: var(--c-fg-subtle);
+  --color-primary: var(--c-primary);
+  --color-primary-strong: var(--c-primary-strong);
+  --color-on-primary: var(--c-on-primary);
+  --color-primary-soft: var(--c-primary-soft);
+  --color-accent: var(--c-accent);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-warn: var(--c-warn);
+}
+
+@layer base {
+  * { border-color: var(--c-border); }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body {
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    overscroll-behavior: none;
+  }
+  ::selection { background: var(--c-primary-soft); }
+  input, button, select, textarea { font: inherit; color: inherit; }
+  table { border-collapse: collapse; }
+}
+
+@layer utilities {
+  .kpi-xl {
+    font-size: 44px; line-height: 1.05; font-weight: 600;
+    letter-spacing: -0.04em; font-variant-numeric: tabular-nums lining-nums;
+  }
+  .headline-lg { font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.025em; }
+  .headline-md { font-size: 18px; line-height: 26px; font-weight: 600; letter-spacing: -0.015em; }
+  .label-caps {
+    font-size: 11px; line-height: 16px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .data-mono {
+    font-family: var(--font-mono); font-size: 13px; line-height: 16px;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .tnum { font-variant-numeric: tabular-nums lining-nums; }
+
+  .card {
+    background: var(--c-container);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+  }
+  .card-hover { transition: background-color 150ms var(--ease-oil), border-color 150ms var(--ease-oil); }
+  .card-hover:hover { border-color: var(--c-border-strong); background: var(--c-container-high); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px; padding: 0 12px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; white-space: nowrap;
+    transition: all 150ms var(--ease-oil); cursor: pointer;
+    border: 1px solid var(--c-border); background: var(--c-container-high);
+    color: var(--c-fg); box-shadow: var(--inner-glow);
+  }
+  .btn:hover { border-color: var(--c-border-strong); background: var(--c-container-highest); }
+  .btn-primary {
+    background: var(--c-primary-strong); border-color: transparent;
+    color: var(--c-on-primary); font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--c-primary); border-color: transparent; }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--c-fg-muted); }
+  .btn-ghost:hover { background: var(--c-container-high); color: var(--c-fg); }
+
+  .input {
+    height: 32px; padding: 0 10px; border-radius: var(--radius-md);
+    background: var(--c-bg); border: 1px solid var(--c-border);
+    font-size: 13px; outline: none; transition: all 150ms var(--ease-oil);
+  }
+  .input:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-soft); }
+
+  .dot-grid {
+    background-image: radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+
+  .rise { animation: rise 420ms var(--ease-oil) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .fade { animation: fade 300ms var(--ease-oil) both; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  .draw { stroke-dasharray: 2200; stroke-dashoffset: 2200; animation: draw 1100ms var(--ease-oil) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  .grow { transform-origin: left; animation: grow 700ms var(--ease-oil) both; }
+  @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  .pulse-ring::before {
+    content: ''; position: absolute; inset: 0; border-radius: 9999px;
+    background: currentColor; animation: pulsering 2s var(--ease-oil) infinite;
+  }
+  @keyframes pulsering { 0% { opacity: .6; transform: scale(1); } 70%,100% { opacity: 0; transform: scale(2.6); } }
+
+  .scroll-thin { scrollbar-width: thin; scrollbar-color: var(--c-border-strong) transparent; }
+  .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: var(--c-border-strong); border-radius: 8px; }
+  .scroll-thin::-webkit-scrollbar-track { background: transparent; }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+  button:focus-visible, a:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 2px;
+  }
+  @keyframes slideIn { from { transform: translateX(-100%); } to { transform: none; } }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: 0; z-index: 100;
+    background: var(--c-container); color: var(--c-fg);
+    padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--c-border);
+  }
+  .skip-link:focus { left: 8px; top: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
