@@ -10,19 +10,40 @@ import {
 } from './icons';
 import { RANGES } from '@/lib/range';
 import type { Site } from '@/lib/site';
+import { SiteMark } from './brand';
+import { CommandPalette } from './command-palette';
+import { ToastProvider } from './toast';
 
-const NAV = [
-  { href: '/overview', label: 'Overview', Icon: IGrid },
-  { href: '/analytics', label: 'Analytics', Icon: IChart },
-  { href: '/revenue', label: 'Revenue', Icon: IMoney },
-  { href: '/customers', label: 'Customers', Icon: IUsers },
-  { href: '/sources', label: 'Sources', Icon: IShare },
-  { href: '/pages', label: 'Pages', Icon: IDoc },
-  { href: '/funnels', label: 'Funnels', Icon: IFilter },
-  { href: '/goals', label: 'Goals', Icon: IFlag },
-  { href: '/seo', label: 'SEO', Icon: ISearch },
-  { href: '/real-time', label: 'Real-time', Icon: IBolt },
-  { href: '/ai-analyst', label: 'AI Analyst', Icon: IBot },
+const NAV_GROUPS: { title: string; items: { href: string; label: string; Icon: typeof IGrid; accent?: boolean }[] }[] = [
+  {
+    title: 'Measure',
+    items: [
+      { href: '/overview', label: 'Overview', Icon: IGrid },
+      { href: '/analytics', label: 'Analytics', Icon: IChart },
+      { href: '/real-time', label: 'Real-time', Icon: IBolt },
+    ],
+  },
+  {
+    title: 'Money',
+    items: [
+      { href: '/revenue', label: 'Revenue', Icon: IMoney },
+      { href: '/customers', label: 'Customers', Icon: IUsers },
+      { href: '/funnels', label: 'Funnels', Icon: IFilter },
+      { href: '/goals', label: 'Goals', Icon: IFlag },
+    ],
+  },
+  {
+    title: 'Acquisition',
+    items: [
+      { href: '/sources', label: 'Sources', Icon: IShare },
+      { href: '/pages', label: 'Pages', Icon: IDoc },
+      { href: '/seo', label: 'SEO', Icon: ISearch },
+    ],
+  },
+  {
+    title: 'Intelligence',
+    items: [{ href: '/ai-analyst', label: 'AI Analyst', Icon: IBot, accent: true }],
+  },
 ];
 
 function useDismiss(onClose: () => void) {
@@ -48,38 +69,48 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
   const sp = useSearchParams();
   const q = sp.get('range') ? `?range=${sp.get('range')}` : '';
 
-  const body = (
+  const body = (drawer: boolean) => (
     <>
       <div className="flex h-16 items-center justify-between gap-2.5 px-5">
         <Link href="/overview" className="flex items-center gap-2.5 rounded focus-ring">
           <ILogo />
           <span className="text-[15px] font-semibold tracking-[-0.02em]">OpenAnalytics</span>
         </Link>
-        {onClose && (
-          <button onClick={onClose} className="btn btn-ghost !h-8 !w-8 !px-0 justify-center lg:hidden"
+        {drawer && (
+          <button onClick={onClose} className="btn btn-ghost !h-8 !w-8 !px-0 justify-center"
                   aria-label="Close navigation">
             <IClose width={15} height={15} />
           </button>
         )}
       </div>
 
-      <nav className="scroll-thin flex-1 space-y-0.5 overflow-y-auto px-3" aria-label="Main">
-        {NAV.map(({ href, label, Icon }) => {
-          const active = path === href;
-          return (
-            <Link
-              key={href} href={href + q} onClick={onClose}
-              aria-current={active ? 'page' : undefined}
-              className={`focus-ring flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors duration-150 ${
-                active ? 'bg-primary-soft font-medium text-primary'
-                       : 'text-fg-muted hover:bg-container-high hover:text-fg'
-              }`}
-            >
-              <Icon width={15} height={15} />
-              {label}
-            </Link>
-          );
-        })}
+      <nav className="scroll-thin flex-1 space-y-4 overflow-y-auto px-3 pb-3" aria-label="Main">
+        {NAV_GROUPS.map((group) => (
+          <div key={group.title}>
+            <p className="label-caps px-2.5 pb-1.5 text-fg-subtle/80">{group.title}</p>
+            <div className="space-y-0.5">
+              {group.items.map(({ href, label, Icon, accent }) => {
+                const active = path === href;
+                return (
+                  <Link
+                    key={href} href={href + q} onClick={drawer ? onClose : undefined}
+                    aria-current={active ? 'page' : undefined}
+                    className={`focus-ring group relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors duration-150 ${
+                      active ? 'bg-primary-soft font-medium text-primary'
+                             : 'text-fg-muted hover:bg-container-high hover:text-fg'
+                    }`}
+                  >
+                    {active && (
+                      <span className="absolute inset-y-1.5 -left-3 w-[3px] rounded-r-full bg-primary" aria-hidden />
+                    )}
+                    <Icon width={15} height={15} className={accent && !active ? 'text-primary/80' : ''} />
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       <div className="space-y-0.5 border-t border-border px-3 py-3">
@@ -89,7 +120,7 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
           { href: 'https://github.com', label: 'GitHub', Icon: ICode, external: true },
         ].map(({ href, label, Icon, external }) => (
           <Link
-            key={label} href={href} onClick={onClose}
+            key={label} href={href} onClick={drawer ? onClose : undefined}
             target={external ? '_blank' : undefined}
             rel={external ? 'noreferrer' : undefined}
             className="focus-ring flex h-8 items-center gap-2.5 rounded-md px-2.5 text-[13px] text-fg-muted transition-colors duration-150 hover:bg-container-high hover:text-fg"
@@ -105,14 +136,14 @@ export function Sidebar({ open, onClose }: { open?: boolean; onClose?: () => voi
   return (
     <>
       <aside className="fixed left-0 top-0 z-50 hidden h-full w-[236px] flex-col border-r border-border bg-surface lg:flex">
-        {body}
+        {body(false)}
       </aside>
       {open && (
         <div className="fixed inset-0 z-[60] lg:hidden">
           <div className="fade absolute inset-0 bg-black/50" onClick={onClose} />
           <aside className="absolute left-0 top-0 flex h-full w-[260px] flex-col border-r border-border bg-surface"
                  style={{ animation: 'slideIn 220ms var(--ease-oil)' }}>
-            {body}
+            {body(true)}
           </aside>
         </div>
       )}
@@ -207,9 +238,10 @@ export function SiteSwitcher({ site, sites }: { site: Site; sites: Site[] }) {
         className="btn max-w-[220px]" onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox" aria-expanded={open} disabled={busy}
       >
-        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${live ? 'bg-primary' : 'bg-fg-subtle'}`}
-              title={live ? 'Receiving traffic' : 'No traffic in the last 5 minutes'} />
+        <SiteMark domain={site.domain} size={16} />
         <span className="truncate">{site.domain}</span>
+        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${live ? 'bg-primary' : 'bg-fg-subtle/60'}`}
+              title={live ? 'Receiving traffic right now' : 'No traffic in the last 5 minutes'} />
         <IChevron width={13} height={13} className="shrink-0 text-fg-subtle" />
       </button>
       {open && (
@@ -224,10 +256,13 @@ export function SiteSwitcher({ site, sites }: { site: Site; sites: Site[] }) {
                 onClick={() => pick(s.public_id)}
                 className="flex w-full items-center justify-between gap-2 rounded px-2.5 py-2 text-left transition-colors hover:bg-container-high"
               >
-                <span className="min-w-0">
-                  <span className="block truncate text-[13px]">{s.domain}</span>
-                  <span className="block text-[11px] text-fg-subtle tnum">
-                    {s.events.toLocaleString()} events
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <SiteMark domain={s.domain} size={20} />
+                  <span className="min-w-0">
+                    <span className="block truncate text-[13px]">{s.domain}</span>
+                    <span className="block text-[11px] text-fg-subtle tnum">
+                      {s.events.toLocaleString()} events
+                    </span>
                   </span>
                 </span>
                 {s.public_id === site.public_id && <ICheck width={13} height={13} className="shrink-0 text-primary" />}
@@ -294,6 +329,15 @@ export function Topbar({
         <SiteSwitcher site={site} sites={sites} />
       </div>
       <div className="flex shrink-0 items-center gap-2">
+        <button
+          onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
+          className="btn hidden !text-fg-subtle md:inline-flex"
+          aria-label="Open command palette"
+        >
+          <ISearch width={13} height={13} />
+          <span className="text-[12.5px]">Search</span>
+          <kbd className="ml-1 rounded border border-border bg-container-high px-1 text-[10px]">⌘K</kbd>
+        </button>
         <RangePicker />
         <ThemeToggle />
         <UserMenu email={email} />
@@ -308,14 +352,17 @@ export function DashChrome({
 }: { site: Site; sites: Site[]; email: string; children: React.ReactNode }) {
   const [menu, setMenu] = useState(false);
   return (
-    <div className="min-h-screen">
-      <Sidebar open={menu} onClose={() => setMenu(false)} />
-      <div className="lg:pl-[236px]">
-        <Topbar site={site} sites={sites} email={email} onMenu={() => setMenu(true)} />
-        <main className="mx-auto max-w-[1280px] px-4 py-6 md:px-10 md:py-7">
-          <div className="flex flex-col gap-6 md:gap-8">{children}</div>
-        </main>
+    <ToastProvider>
+      <div className="min-h-screen">
+        <Sidebar open={menu} onClose={() => setMenu(false)} />
+        <div className="lg:pl-[236px]">
+          <Topbar site={site} sites={sites} email={email} onMenu={() => setMenu(true)} />
+          <main className="mx-auto max-w-[1280px] px-4 py-6 md:px-10 md:py-7">
+            <div className="flex flex-col gap-6 md:gap-8">{children}</div>
+          </main>
+        </div>
       </div>
-    </div>
+      <CommandPalette sites={sites} current={site.public_id} />
+    </ToastProvider>
   );
 }

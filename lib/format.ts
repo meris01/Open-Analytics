@@ -75,14 +75,33 @@ const COUNTRY_NAMES: Record<string, string> = {
 export const countryName = (c?: string | null) =>
   c ? COUNTRY_NAMES[c.toUpperCase()] ?? c : 'Unknown';
 
+const SOURCE_NAMES: Record<string, string> = {
+  google: 'Google', 'google.com': 'Google', 'google.co.uk': 'Google', 'google.de': 'Google',
+  'google.co.in': 'Google', 'x.com': 'X / Twitter', 'twitter.com': 'X / Twitter', 't.co': 'X / Twitter',
+  'reddit.com': 'Reddit', 'old.reddit.com': 'Reddit',
+  'news.ycombinator.com': 'Hacker News', 'linkedin.com': 'LinkedIn', 'lnkd.in': 'LinkedIn',
+  'github.com': 'GitHub', 'producthunt.com': 'Product Hunt', 'youtube.com': 'YouTube',
+  'youtu.be': 'YouTube', 'facebook.com': 'Facebook', 'm.facebook.com': 'Facebook',
+  'instagram.com': 'Instagram', 'l.instagram.com': 'Instagram', 'tiktok.com': 'TikTok',
+  'pinterest.com': 'Pinterest', 'medium.com': 'Medium', 'substack.com': 'Substack',
+  'notion.so': 'Notion', 'discord.com': 'Discord', 'discord.gg': 'Discord', 'slack.com': 'Slack',
+  't.me': 'Telegram', 'telegram.org': 'Telegram', 'whatsapp.com': 'WhatsApp',
+  'threads.net': 'Threads', 'bsky.app': 'Bluesky', 'mastodon.social': 'Mastodon',
+  'stackoverflow.com': 'Stack Overflow', 'dev.to': 'DEV', 'quora.com': 'Quora',
+  'bing.com': 'Bing', 'duckduckgo.com': 'DuckDuckGo', 'yandex.ru': 'Yandex',
+  'baidu.com': 'Baidu', 'yahoo.com': 'Yahoo', 'search.yahoo.com': 'Yahoo',
+  'ecosia.org': 'Ecosia', 'search.brave.com': 'Brave Search',
+  'chatgpt.com': 'ChatGPT', 'chat.openai.com': 'ChatGPT',
+  'perplexity.ai': 'Perplexity', 'claude.ai': 'Claude',
+  newsletter: 'Newsletter', email: 'Email', mail: 'Email',
+  organic: 'Organic search', referral: 'Referral', none: 'Direct', unknown: 'Unknown',
+};
+
 export function sourceLabel(s?: string | null): string {
   if (!s || s === 'direct') return 'Direct';
-  const map: Record<string, string> = {
-    google: 'Google', 'google.com': 'Google', 'x.com': 'X / Twitter', 'twitter.com': 'X / Twitter',
-    'reddit.com': 'Reddit', 'news.ycombinator.com': 'Hacker News', 'linkedin.com': 'LinkedIn',
-    'github.com': 'GitHub', 'producthunt.com': 'Product Hunt', 'youtube.com': 'YouTube',
-    'facebook.com': 'Facebook', 'bing.com': 'Bing', 'duckduckgo.com': 'DuckDuckGo',
-    newsletter: 'Newsletter', email: 'Email',
-  };
-  return map[s.toLowerCase()] ?? s.replace(/^www\./, '');
+  const k = s.toLowerCase().replace(/^www\./, '');
+  if (SOURCE_NAMES[k]) return SOURCE_NAMES[k];
+  // Fall back to a tidy Title Case version of the bare domain
+  const bare = k.replace(/\.(com|io|org|net|co|dev|ai|app|so|st|me|gg|to)$/, '');
+  return bare.charAt(0).toUpperCase() + bare.slice(1);
 }

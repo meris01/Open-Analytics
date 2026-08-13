@@ -29,7 +29,9 @@ supabase/migrations/0003_auth_multitenant.sql  auth, RLS, site/goal/funnel CRUD
 supabase/migrations/0004_seed_demo.sql         optional: demo data generator
 ```
 
-On Supabase, paste each into the SQL editor.
+On Supabase, paste each into the SQL editor. **Settings → Database setup** walks
+through this step by step in the running app, with copy-paste blocks, verification
+queries and health checks — it is the canonical version of these instructions.
 
 ### 2. Environment
 
@@ -96,7 +98,10 @@ Declarative alternative, no JavaScript required:
 | **Multi-site** | One account, many websites, isolated by RLS |
 | **AI Analyst** | Deterministic insight engine over your own numbers. No LLM key required |
 | **Exports** | Working CSV download on every table |
-| **Theme** | Dark + light, both verified WCAG 2.1 AA |
+| **Theme** | Dark + light, both verified WCAG 2.1 AA (1,799 text nodes, zero failures) |
+| **Icons** | ~47 inline brand marks, 55 hand-drawn SVG country flags, browser/OS/device glyphs — no network calls, no emoji fonts, nothing that can 404 |
+| **Keyboard** | ⌘K command palette: jump pages, switch website, change range, export, toggle theme |
+| **Docs** | Settings is a nine-tab hub with the complete Supabase SQL setup, verification queries, retention, backups, API reference and troubleshooting |
 
 ---
 

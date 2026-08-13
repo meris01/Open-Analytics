@@ -6,7 +6,7 @@ import { Card, PageHead, Empty, Badge } from './ui';
 import { MiniBars } from './chart';
 import { IDesktop, IMobile, IGlobe, IMoney } from './icons';
 import { countryName, money, num, timeAgo } from '@/lib/format';
-import { Flag, SourceMark } from './brand';
+import { CountryFlag, SourceMark, CountryCell } from './brand';
 
 export function RealtimeView({ initial, currency = 'USD' }: { initial: Realtime; currency?: string }) {
   const [data, setData] = useState<Realtime>(initial);
@@ -107,7 +107,7 @@ export function RealtimeView({ initial, currency = 'USD' }: { initial: Realtime;
                     <span className="absolute inset-y-0 left-0 rounded"
                           style={{ width: `${(Number(c.visitors) / maxCountry) * 100}%`, background: 'var(--c-primary-soft)' }} />
                     <span className="relative flex items-center gap-2 text-[12.5px]">
-                      <Flag code={c.country} /> {countryName(c.country)}
+                      <CountryFlag code={c.country} /> {countryName(c.country)}
                     </span>
                     <span className="data-mono relative text-[12.5px]">{c.visitors}</span>
                   </div>
@@ -161,7 +161,7 @@ export function RealtimeView({ initial, currency = 'USD' }: { initial: Realtime;
                     </p>
                   )}
                   <div className="data-mono mt-2 flex flex-wrap items-center gap-3 text-[10.5px] text-fg-subtle">
-                    <span className="flex items-center gap-1.5"><Flag code={e.country} size={12} /> {e.city ?? countryName(e.country)}</span>
+                    <span className="flex items-center gap-1.5"><CountryFlag code={e.country} size={12} /> {e.city ?? countryName(e.country)}</span>
                     <span className="flex items-center gap-1.5"><SourceMark source={e.source} size={12} /> {e.source ?? 'direct'}</span>
                     <span>{e.os ?? e.device}</span>
                   </div>

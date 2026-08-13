@@ -4,7 +4,7 @@ import { IUsers, IRoute, IClose, IChevronL, IChevronR, IDownload, IMoney, ILink 
 import { getCustomers, getJourney } from '@/lib/queries';
 import { requireSite } from '@/lib/site';
 import { countryName, money, num, sourceLabel, timeAgo } from '@/lib/format';
-import { Flag, SourceMark } from '@/components/brand';
+import { CountryFlag, SourceMark, CountryCell } from '@/components/brand';
 import { ExportButton } from '@/components/export-button';
 
 export const dynamic = 'force-dynamic';
@@ -81,7 +81,7 @@ export default async function Customers({
                         </span>
                       </div>
                       <div className="col-span-4 flex items-center gap-2 truncate text-[12.5px] text-fg-muted">
-                        <Flag code={c.country} size={13} /> <SourceMark source={c.first_source} size={14} /> {sourceLabel(c.first_source)}
+                        <CountryFlag code={c.country} size={13} /> <SourceMark source={c.first_source} size={14} /> {sourceLabel(c.first_source)}
                       </div>
                       <div className="data-mono col-span-3 text-right text-[13px]">{money(c.total_revenue, currency)}</div>
                     </Link>
@@ -142,7 +142,7 @@ export default async function Customers({
                 <div className="mt-3 flex flex-wrap gap-2 text-[11.5px] text-fg-subtle">
                   <Badge>{num(journey.visitor.sessions)} sessions</Badge>
                   <Badge>{num(journey.visitor.pageviews)} pageviews</Badge>
-                  <Badge><Flag code={journey.visitor.country} size={12} /> <span className="ml-1.5">{countryName(journey.visitor.country)}</span></Badge>
+                  <Badge><CountryFlag code={journey.visitor.country} size={12} /> <span className="ml-1.5">{countryName(journey.visitor.country)}</span></Badge>
                 </div>
               </div>
 

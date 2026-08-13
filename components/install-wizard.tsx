@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CopyBlock } from './copy-block';
-import { SourceMark, Flag } from './brand';
+import { SourceMark, CountryFlag } from './brand';
 import {
   ICheck, IWarn, IChevronR, IClock, ICode, ISpark, IChevron, IBolt,
 } from './icons';
@@ -125,7 +125,7 @@ export function InstallWizard({
               <div key={i} className="fade flex items-center gap-3 rounded bg-surface-low px-2.5 py-1.5">
                 <SourceMark source={e.referrer_host ?? 'direct'} size={14} />
                 <span className="data-mono flex-1 truncate text-[12px]">{e.path}</span>
-                {e.country && <Flag code={e.country} size={13} />}
+                {e.country && <CountryFlag code={e.country} size={13} />}
                 <span className="text-[11px] text-fg-subtle">{timeAgo(e.created_at)}</span>
               </div>
             ))}

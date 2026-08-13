@@ -5,7 +5,7 @@ import { getBreakdown, getKpis, getSeries } from '@/lib/queries';
 import { resolveRange } from '@/lib/range';
 import { requireSite } from '@/lib/site';
 import { countryName, duration, num, pct, sourceLabel } from '@/lib/format';
-import { Flag, SourceMark } from '@/components/brand';
+import { CountryFlag, SourceMark, CountryCell } from '@/components/brand';
 import { ExportButton } from '@/components/export-button';
 
 export const dynamic = 'force-dynamic';
@@ -56,7 +56,7 @@ export default async function Analytics({
             secondary="Country"
             rows={countries.map((x) => ({
               key: x.label,
-              label: (<span className="flex items-center gap-2"><Flag code={x.label} /> {countryName(x.label)}</span>),
+              label: (<span className="flex items-center gap-2"><CountryFlag code={x.label} /> {countryName(x.label)}</span>),
               value: x.visitors,
             }))}
           />

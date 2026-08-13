@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, Badge } from './ui';
+import { Card, Badge, Empty } from './ui';
+import { useToast } from './toast';
 import { IPlus, ITrash, IEdit, IWarn, ICheck, IFlag, IFilter } from './icons';
 
 type Goal = { id: string; name: string; match_type: string; match_value: string; value: number };
@@ -53,8 +54,9 @@ function ErrorLine({ msg }: { msg: string | null }) {
 }
 
 /* --------------------------------- GOALS --------------------------------- */
-function Goals({ site, goals }: { site: string; goals: Goal[] }) {
+export function GoalsPanel({ site, goals }: { site: string; goals: Goal[] }) {
   const { call, error, busy } = useApi();
+  const toast = useToast();
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<Goal | null>(null);
   const [form, setForm] = useState({ name: '', match_type: 'event', match_value: '', value: '0' });
@@ -71,7 +73,11 @@ function Goals({ site, goals }: { site: string; goals: Goal[] }) {
       site, id: editing?.id, name: form.name, match_type: form.match_type,
       match_value: form.match_value, value: Number(form.value) || 0,
     });
-    if (ok) setAdding(false);
+    if (ok) {
+      setAdding(false);
+      toast.push({ kind: 'success', title: editing ? 'Goal updated' : 'Goal created',
+                   body: `${form.name} will be counted from now on.` });
+    }
   }
 
   return (
@@ -102,8 +108,16 @@ function Goals({ site, goals }: { site: string; goals: Goal[] }) {
                       aria-label={`Edit ${g.name}`}><IEdit width={13} height={13} /></button>
               <button className="btn btn-ghost !h-7 !w-7 !px-0 justify-center hover:!text-[color:var(--c-danger)]"
                       disabled={busy}
-                      onClick={() => confirm(`Delete the goal "${g.name}"? Historic events are kept.`)
-                        && call('/api/goals', { action: 'delete', id: g.id })}
+                      onClick={async () => {
+                        const ok = await toast.confirm({
+                          title: `Delete “${g.name}”?`,
+                          body: 'The goal definition is removed. Events already recorded are kept, so re-creating it later restores the history.',
+                          confirmLabel: 'Delete goal', danger: true,
+                        });
+                        if (ok && await call('/api/goals', { action: 'delete', id: g.id })) {
+                          toast.push({ kind: 'success', title: 'Goal deleted' });
+                        }
+                      }}
                       aria-label={`Delete ${g.name}`}><ITrash width={13} height={13} /></button>
             </span>
           </div>
@@ -149,8 +163,9 @@ function Goals({ site, goals }: { site: string; goals: Goal[] }) {
 }
 
 /* -------------------------------- FUNNELS -------------------------------- */
-function Funnels({ site, funnels }: { site: string; funnels: Funnel[] }) {
+export function FunnelsPanel({ site, funnels }: { site: string; funnels: Funnel[] }) {
   const { call, error, busy } = useApi();
+  const toast = useToast();
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<Funnel | null>(null);
   const [name, setName] = useState('');
@@ -177,7 +192,10 @@ function Funnels({ site, funnels }: { site: string; funnels: Funnel[] }) {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     const ok = await call('/api/funnels', { site, id: editing?.id, name, steps });
-    if (ok) setAdding(false);
+    if (ok) {
+      setAdding(false);
+      toast.push({ kind: 'success', title: editing ? 'Funnel updated' : 'Funnel created' });
+    }
   }
 
   const setStep = (i: number, patch: Partial<Step>) =>
@@ -209,8 +227,16 @@ function Funnels({ site, funnels }: { site: string; funnels: Funnel[] }) {
                       aria-label={`Edit ${f.name}`}><IEdit width={13} height={13} /></button>
               <button className="btn btn-ghost !h-7 !w-7 !px-0 justify-center hover:!text-[color:var(--c-danger)]"
                       disabled={busy}
-                      onClick={() => confirm(`Delete the funnel "${f.name}"?`)
-                        && call('/api/funnels', { action: 'delete', id: f.id })}
+                      onClick={async () => {
+                        const ok = await toast.confirm({
+                          title: `Delete “${f.name}”?`,
+                          body: 'Funnels are just definitions — your event history is untouched.',
+                          confirmLabel: 'Delete funnel', danger: true,
+                        });
+                        if (ok && await call('/api/funnels', { action: 'delete', id: f.id })) {
+                          toast.push({ kind: 'success', title: 'Funnel deleted' });
+                        }
+                      }}
                       aria-label={`Delete ${f.name}`}><ITrash width={13} height={13} /></button>
             </span>
           </div>
@@ -263,9 +289,10 @@ function Funnels({ site, funnels }: { site: string; funnels: Funnel[] }) {
 }
 
 /* ------------------------------ SITE DETAILS ----------------------------- */
-function SiteDetails({ site, siteCount }: { site: SiteInfo; siteCount: number }) {
+export function WebsitePanel({ site, siteCount }: { site: SiteInfo; siteCount: number }) {
   const router = useRouter();
   const { call, error, busy } = useApi();
+  const toast = useToast();
   const [name, setName] = useState(site.name);
   const [currency, setCurrency] = useState(site.currency);
   const [saved, setSaved] = useState(false);
@@ -278,7 +305,12 @@ function SiteDetails({ site, siteCount }: { site: SiteInfo; siteCount: number })
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ site: site.public_id, name, currency }),
     });
-    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); router.refresh(); }
+    if (res.ok) {
+      setSaved(true); setTimeout(() => setSaved(false), 2000); router.refresh();
+      toast.push({ kind: 'success', title: 'Website updated' });
+    } else {
+      toast.push({ kind: 'error', title: 'Could not save', body: 'Check your connection and try again.' });
+    }
   }
 
   async function remove() {
@@ -341,14 +373,4 @@ function SiteDetails({ site, siteCount }: { site: SiteInfo; siteCount: number })
   );
 }
 
-export function SettingsPanels({
-  site, siteCount, goals, funnels,
-}: { site: SiteInfo; siteCount: number; goals: Goal[]; funnels: Funnel[] }) {
-  return (
-    <>
-      <Goals site={site.public_id} goals={goals} />
-      <Funnels site={site.public_id} funnels={funnels} />
-      <SiteDetails site={site} siteCount={siteCount} />
-    </>
-  );
-}
+
